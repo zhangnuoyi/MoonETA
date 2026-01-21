@@ -54,55 +54,32 @@ const WalletConnectButton = ({ onConnect, onDisconnect, walletConnected, walletA
       console.log('开始断开钱包连接...');
       
       if (window.ethereum) {
-        // 1. 首先尝试使用wallet_revokePermissions方法撤销所有权限
+        // 1. 直接使用wallet_revokePermissions方法撤销eth_accounts权限
+        // 这是MetaMask文档中推荐的方法
         try {
-          console.log('尝试使用wallet_revokePermissions方法撤销权限...');
-          // 获取当前所有权限
-          const permissions = await window.ethereum.request({
-            method: 'wallet_getPermissions'
-          });
-          console.log('当前钱包权限:', permissions);
-          
-          // 撤销所有权限
-          for (const permission of permissions) {
-            try {
-              await window.ethereum.request({
-                method: 'wallet_revokePermissions',
-                params: [{ [permission.parentCapability]: {} }]
-              });
-              console.log(`成功撤销${permission.parentCapability}权限`);
-            } catch (error) {
-              console.error(`撤销${permission.parentCapability}权限失败:`, error);
-            }
-          }
-        } catch (error) {
-          console.error('获取或撤销权限失败:', error);
-        }
-        
-        // 2. 尝试使用wallet_disconnect方法断开连接
-        try {
-          console.log('尝试使用wallet_disconnect方法断开连接...');
+          console.log('尝试使用wallet_revokePermissions方法撤销eth_accounts权限...');
           await window.ethereum.request({
-            method: 'wallet_disconnect'
+            method: 'wallet_revokePermissions',
+            params: [{ eth_accounts: {} }]
           });
-          console.log('成功使用wallet_disconnect方法断开连接');
+          console.log('成功撤销eth_accounts权限');
         } catch (error) {
-          console.error('wallet_disconnect方法失败:', error);
+          console.error('撤销eth_accounts权限失败:', error);
         }
         
-        // 3. 尝试使用eth_requestAccounts方法，但不传递任何参数，这可能会重置连接状态
+        // 2. 尝试使用wallet_requestPermissions方法，这可能会重置权限状态
         try {
-          console.log('尝试使用eth_requestAccounts方法重置连接状态...');
-          // 注意：这可能会触发MetaMask弹窗，所以我们使用try-catch来捕获错误
+          console.log('尝试使用wallet_requestPermissions方法重置权限状态...');
           await window.ethereum.request({
-            method: 'eth_requestAccounts',
-            params: []
+            method: 'wallet_requestPermissions',
+            params: [{ eth_accounts: {} }]
           });
+          console.log('成功重置权限状态');
         } catch (error) {
-          console.error('eth_requestAccounts方法失败:', error);
+          console.error('重置权限状态失败:', error);
         }
         
-        // 4. 尝试清除所有与钱包相关的事件监听器
+        // 3. 尝试清除所有与钱包相关的事件监听器
         try {
           console.log('尝试清除钱包事件监听器...');
           window.ethereum.removeAllListeners('accountsChanged');
@@ -114,13 +91,24 @@ const WalletConnectButton = ({ onConnect, onDisconnect, walletConnected, walletA
           console.error('清除钱包事件监听器失败:', error);
         }
         
-        // 5. 尝试刷新页面，这会强制清除所有连接状态
+        // 4. 直接触发accountsChanged事件，传入空数组，通知所有监听器账户已断开
         try {
-          console.log('尝试刷新页面以清除所有连接状态...');
-          // 延迟刷新，确保所有断开连接的操作都已执行
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
+          console.log('尝试触发accountsChanged事件...');
+          if (window.ethereum.on) {
+            // 模拟断开连接，触发accountsChanged事件
+            const event = new Event('accountsChanged');
+            event.accounts = [];
+            window.dispatchEvent(event);
+          }
+          console.log('成功触发accountsChanged事件');
+        } catch (error) {
+          console.error('触发accountsChanged事件失败:', error);
+        }
+        
+        // 5. 立即刷新页面，强制清除所有连接状态
+        try {
+          console.log('刷新页面以清除所有连接状态...');
+          window.location.reload();
         } catch (error) {
           console.error('刷新页面失败:', error);
         }
