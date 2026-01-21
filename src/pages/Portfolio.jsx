@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import '../styles/pages/Portfolio.css';
 import WalletConnectButton from '../components/ui/WalletConnectButton';
-import EtfCard from '../components/ui/EtfCard';
 
 /**
  * 投资组合页面组件
@@ -110,14 +109,26 @@ const Portfolio = () => {
     setWalletAddress(null);
   };
 
+  // 模拟资产数据
+  const assets = {
+    eth: 0.0997,
+    leapETF: 0.0000,
+    leth: 0.0000,
+    ltc: 0.0000,
+    link: 0.0000,
+    usdc: 0.0000
+  };
+
+  // 模拟ETF分配数据
+  const etfAllocation = [
+    { name: 'LTC', percentage: 40, color: '#FFA500' },
+    { name: 'LETH', percentage: 30, color: '#9370DB' },
+    { name: 'LINK', percentage: 20, color: '#4169E1' },
+    { name: 'USDC', percentage: 10, color: '#32CD32' }
+  ];
+
   return (
     <div className="portfolio-container">
-      {/* 网站标语和介绍 */}
-      <div className="website-intro">
-        <h1 className="intro-title">LEAPETF</h1>
-        <p className="intro-subtitle">去中心化区块链ETF交易平台</p>
-      </div>
-
       {/* 钱包连接提示 */}
       {!walletConnected && (
         <div className="wallet-prompt">
@@ -137,71 +148,127 @@ const Portfolio = () => {
 
       {/* 投资组合内容 - 仅在钱包连接后显示 */}
       {walletConnected && (
-        <>
+        <div className="portfolio-content">
+          {/* 页面头部 */}
           <div className="portfolio-header">
-            <div className="portfolio-title">
-              <h1>我的投资组合</h1>
-            </div>
-            <div className="portfolio-actions">
-              <WalletConnectButton 
-                onConnect={handleWalletConnect} 
-                onDisconnect={handleWalletDisconnect} 
-                walletConnected={walletConnected} 
-                walletAddress={walletAddress} 
-              />
+            <div className="logo">LEAPETF</div>
+            <div className="wallet-info">
+              <span className="wallet-address">{walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}</span>
+              <button className="disconnect-btn" onClick={handleWalletDisconnect}>Disconnect</button>
             </div>
           </div>
 
-          <div className="portfolio-summary">
-            <div className="summary-card">
-              <div className="summary-title">总价值</div>
-              <div className="summary-value">${totalPortfolioValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-            </div>
-            <div className="summary-card">
-              <div className="summary-title">总收益</div>
-              <div className={`summary-value ${totalReturns >= 0 ? 'positive' : 'negative'}`}>
-                ${Math.abs(totalReturns).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                <span className="summary-change">{totalReturns >= 0 ? '+' : ''}{(totalReturns / totalPortfolioValue * 100).toFixed(2)}%</span>
+          {/* 资产概览卡片 */}
+          <div className="asset-overview">
+            {/* Ethereum Balance */}
+            <div className="overview-card">
+              <div className="card-header">
+                <span className="card-icon">💎</span>
+                <span className="card-title">Ethereum Balance</span>
               </div>
+              <div className="card-value">{assets.eth}</div>
+              <div className="card-subtitle">ETH</div>
             </div>
-            <div className="summary-card">
-              <div className="summary-title">持有ETF数量</div>
-              <div className="summary-value">{etfData.length}</div>
-            </div>
-          </div>
 
-          <div className="portfolio-content">
-            {/* ETH资产显示 */}
-            <div className="portfolio-section">
-              <h2>我的资产</h2>
-              <div className="asset-cards-grid">
-                <div className="asset-card eth-card">
-                  <div className="asset-header">
-                    <div className="asset-icon">Ξ</div>
-                    <div className="asset-info">
-                      <div className="asset-name">Ethereum</div>
-                      <div className="asset-symbol">ETH</div>
-                    </div>
-                  </div>
-                  <div className="asset-balance">
-                    <div className="balance-amount">{ethBalance.amount} ETH</div>
-                    <div className="balance-value">${ethBalance.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                  </div>
-                </div>
+            {/* LeapETF Balance */}
+            <div className="overview-card">
+              <div className="card-header">
+                <span className="card-icon">📊</span>
+                <span className="card-title">LeapETF Balance</span>
               </div>
+              <div className="card-value">{assets.leapETF}</div>
+              <div className="card-subtitle">LEAPETF</div>
             </div>
-            
-            {/* ETF持仓显示 */}
-            <div className="portfolio-section">
-              <h2>我的ETF持仓</h2>
-              <div className="eta-cards-grid">
-                {etfData.map(etf => (
-                  <EtfCard key={etf.id} eta={etf} />
+
+            {/* ETF Allocation */}
+            <div className="overview-card">
+              <div className="card-header">
+                <span className="card-icon">📈</span>
+                <span className="card-title">ETF Allocation</span>
+              </div>
+              <div className="allocation-list">
+                {etfAllocation.map((item, index) => (
+                  <div key={index} className="allocation-item">
+                    <div className="allocation-color" style={{ backgroundColor: item.color }}></div>
+                    <span className="allocation-name">{item.name}</span>
+                    <span className="allocation-percentage">{item.percentage}%</span>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
-        </>
+
+          {/* Your Assets部分 */}
+          <div className="assets-section">
+            <h2 className="section-title">Your Assets</h2>
+            <div className="assets-table">
+              {/* ETF */}
+              <div className="asset-row">
+                <div className="asset-info">
+                  <span className="asset-icon">📊</span>
+                  <div className="asset-details">
+                    <div className="asset-name">ETF</div>
+                    <div className="asset-subname">LeapETF Token</div>
+                  </div>
+                </div>
+                <div className="asset-balance">{assets.leapETF}</div>
+              </div>
+
+              {/* LETH */}
+              <div className="asset-row">
+                <div className="asset-info">
+                  <span className="asset-icon">💎</span>
+                  <div className="asset-details">
+                    <div className="asset-name">LETH</div>
+                    <div className="asset-subname">Wrapped Ether</div>
+                  </div>
+                </div>
+                <div className="asset-balance">{assets.leth}</div>
+              </div>
+
+              {/* LTC */}
+              <div className="asset-row">
+                <div className="asset-info">
+                  <span className="asset-icon">🟠</span>
+                  <div className="asset-details">
+                    <div className="asset-name">LTC</div>
+                    <div className="asset-subname">Wrapped Bitcoin</div>
+                  </div>
+                </div>
+                <div className="asset-balance">{assets.ltc}</div>
+              </div>
+
+              {/* LINK */}
+              <div className="asset-row">
+                <div className="asset-info">
+                  <span className="asset-icon">🔗</span>
+                  <div className="asset-details">
+                    <div className="asset-name">LINK</div>
+                    <div className="asset-subname">Chainlink</div>
+                  </div>
+                </div>
+                <div className="asset-balance">{assets.link}</div>
+              </div>
+
+              {/* USDC */}
+              <div className="asset-row">
+                <div className="asset-info">
+                  <span className="asset-icon">💵</span>
+                  <div className="asset-details">
+                    <div className="asset-name">USDC</div>
+                    <div className="asset-subname">USD Coin</div>
+                  </div>
+                </div>
+                <div className="asset-balance">{assets.usdc}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* 页脚 */}
+          <div className="footer">
+            <div className="footer-text">© 2025 LeapETF. All rights reserved.</div>
+          </div>
+        </div>
       )}
     </div>
   );
