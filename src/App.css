@@ -34,6 +34,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: calc(100% - 250px); /* 减去侧边栏宽度，确保主容器占据剩余空间 */
 }
 
 /* 主内容区域 */
@@ -43,9 +44,7 @@ body {
   background-color: #f8fafc;
   width: 100%;
   margin-top: 70px; /* 顶部信息栏高度 */
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 95vw; /* 最大宽度为视口宽度的95%，确保合理留白 */
+  max-width: 100%; /* 最大宽度为100%，确保内容充分利用空间 */
   min-width: 300px;
 }
 
