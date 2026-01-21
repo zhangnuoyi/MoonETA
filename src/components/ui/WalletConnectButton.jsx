@@ -56,28 +56,47 @@ const WalletConnectButton = ({ onConnect, onDisconnect, walletConnected, walletA
       if (window.ethereum) {
         // 尝试使用wallet_revokePermissions方法断开连接
         try {
+          console.log('尝试使用wallet_revokePermissions方法撤销权限...');
+          // 正确的参数格式应该是这样的
           await window.ethereum.request({
             method: 'wallet_revokePermissions',
-            params: [{
-              eth_accounts: {}
-            }]
+            params: [{ eth_accounts: {} }]
           });
           console.log('成功撤销钱包权限');
         } catch (error) {
           console.error('撤销钱包权限失败:', error);
-          // 如果wallet_revokePermissions方法不可用，尝试其他方法
+          
+          // 尝试使用另一种方法：wallet_disconnect
           try {
-            // 尝试使用wallet_requestPermissions方法重新请求权限，可能会触发用户确认
+            console.log('尝试使用wallet_disconnect方法断开连接...');
             await window.ethereum.request({
-              method: 'wallet_requestPermissions',
-              params: [{
-                eth_accounts: {}
-              }]
+              method: 'wallet_disconnect'
             });
-            console.log('重新请求钱包权限成功');
+            console.log('成功使用wallet_disconnect方法断开连接');
           } catch (error) {
-            console.error('重新请求钱包权限失败:', error);
+            console.error('wallet_disconnect方法失败:', error);
+            
+            // 如果以上方法都失败，尝试模拟断开连接
+            console.log('尝试模拟断开连接...');
+            // 触发accountsChanged事件，传入空数组
+            if (typeof window.ethereum._events === 'object' && window.ethereum._events.accountsChanged) {
+              window.ethereum._events.accountsChanged.forEach(listener => {
+                listener([]);
+              });
+              console.log('成功触发accountsChanged事件');
+            }
           }
+        }
+        
+        // 尝试清除所有与钱包相关的事件监听器
+        try {
+          console.log('尝试清除钱包事件监听器...');
+          window.ethereum.removeAllListeners('accountsChanged');
+          window.ethereum.removeAllListeners('chainChanged');
+          window.ethereum.removeAllListeners('disconnect');
+          console.log('成功清除钱包事件监听器');
+        } catch (error) {
+          console.error('清除钱包事件监听器失败:', error);
         }
       }
       
