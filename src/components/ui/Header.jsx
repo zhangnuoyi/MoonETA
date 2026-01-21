@@ -35,7 +35,7 @@ const Header = () => {
             <div className="wallet-info">
               <span className="wallet-address">{formatWalletAddress(walletAddress)}</span>
               <button className="disconnect-btn" onClick={disconnectWallet}>
-                Disconnect
+                断开钱包连接1
               </button>
               <span className="settings-icon">⚙️</span>
             </div>

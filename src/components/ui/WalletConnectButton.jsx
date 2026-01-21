@@ -53,21 +53,109 @@ const WalletConnectButton = ({ onConnect, onDisconnect, walletConnected, walletA
     try {
       console.log('开始断开钱包连接...');
       
-      // 1. 首先调用回调函数通知父组件钱包已断开连接
-      if (onDisconnect) {
-        onDisconnect();
-      }
-      
-      // 2. 尝试使用window.location.href方法刷新页面，这会完全重新加载页面
-      // 这是最可靠的方法，因为它会强制清除所有与钱包相关的状态
-      try {
-        console.log('强制刷新页面以清除所有连接状态...');
-        window.location.href = window.location.origin + '/portfolio';
-      } catch (error) {
-        console.error('刷新页面失败:', error);
+      if (window.ethereum) {
+        // 1. 尝试使用eth_accounts方法，这可能会返回当前连接的账户
+        try {
+          console.log('尝试使用eth_accounts方法获取当前连接的账户...');
+          const accounts = await window.ethereum.request({
+            method: 'eth_accounts'
+          });
+          console.log('当前连接的账户:', accounts);
+        } catch (error) {
+          console.error('获取当前连接的账户失败:', error);
+        }
+        
+        // 2. 尝试使用wallet_revokePermissions方法撤销eth_accounts权限
+        try {
+          console.log('尝试使用wallet_revokePermissions方法撤销eth_accounts权限...');
+          await window.ethereum.request({
+            method: 'wallet_revokePermissions',
+            params: [{ eth_accounts: {} }]
+          });
+          console.log('成功撤销eth_accounts权限');
+        } catch (error) {
+          console.error('撤销eth_accounts权限失败:', error);
+        }
+        
+        // 3. 尝试使用wallet_requestPermissions方法，这可能会重置权限状态
+        try {
+          console.log('尝试使用wallet_requestPermissions方法重置权限状态...');
+          await window.ethereum.request({
+            method: 'wallet_requestPermissions',
+            params: [{ eth_accounts: {} }]
+          });
+          console.log('成功重置权限状态');
+        } catch (error) {
+          console.error('重置权限状态失败:', error);
+        }
+        
+        // 4. 尝试使用window.ethereum._disconnect方法（如果可用）
+        try {
+          console.log('尝试使用window.ethereum._disconnect方法断开连接...');
+          if (typeof window.ethereum._disconnect === 'function') {
+            window.ethereum._disconnect();
+            console.log('成功使用window.ethereum._disconnect方法断开连接');
+          } else {
+            console.log('window.ethereum._disconnect方法不可用');
+          }
+        } catch (error) {
+          console.error('window.ethereum._disconnect方法失败:', error);
+        }
+        
+        // 5. 尝试使用window.ethereum.disconnect方法（如果可用）
+        try {
+          console.log('尝试使用window.ethereum.disconnect方法断开连接...');
+          if (typeof window.ethereum.disconnect === 'function') {
+            window.ethereum.disconnect();
+            console.log('成功使用window.ethereum.disconnect方法断开连接');
+          } else {
+            console.log('window.ethereum.disconnect方法不可用');
+          }
+        } catch (error) {
+          console.error('window.ethereum.disconnect方法失败:', error);
+        }
+        
+        // 6. 尝试清除所有与钱包相关的事件监听器
+        try {
+          console.log('尝试清除钱包事件监听器...');
+          window.ethereum.removeAllListeners('accountsChanged');
+          window.ethereum.removeAllListeners('chainChanged');
+          window.ethereum.removeAllListeners('disconnect');
+          window.ethereum.removeAllListeners('connect');
+          console.log('成功清除钱包事件监听器');
+        } catch (error) {
+          console.error('清除钱包事件监听器失败:', error);
+        }
+        
+        // 7. 尝试清除所有与钱包相关的本地存储
+        try {
+          console.log('尝试清除钱包本地存储...');
+          localStorage.removeItem('wallet_connect');
+          localStorage.removeItem('ethereum');
+          localStorage.removeItem('metamask');
+          localStorage.removeItem('metamask_connector');
+          console.log('成功清除钱包本地存储');
+        } catch (error) {
+          console.error('清除钱包本地存储失败:', error);
+        }
+        
+        // 8. 尝试使用window.location.href方法刷新页面，这会完全重新加载页面
+        try {
+          console.log('强制刷新页面以清除所有连接状态...');
+          setTimeout(() => {
+            window.location.href = window.location.origin + '/portfolio';
+          }, 1000);
+        } catch (error) {
+          console.error('刷新页面失败:', error);
+        }
       }
       
       console.log('钱包已断开连接');
+      
+      // 调用回调函数通知父组件
+      if (onDisconnect) {
+        onDisconnect();
+      }
     } catch (error) {
       console.error('断开钱包连接失败:', error);
       // 即使出错，也要调用回调函数通知父组件
@@ -93,13 +181,13 @@ const WalletConnectButton = ({ onConnect, onDisconnect, walletConnected, walletA
             className="wallet-connect-btn meta-mask-btn"
             onClick={connectWallet}
           >
-            Connect with MetaMask
+            连接MetaMask钱包
           </button>
           <button 
             className="wallet-connect-btn brave-wallet-btn"
             onClick={connectWallet}
           >
-            Connect with Brave Wallet
+            连接Brave钱包
           </button>
         </div>
       ) : (
@@ -109,7 +197,7 @@ const WalletConnectButton = ({ onConnect, onDisconnect, walletConnected, walletA
             className="disconnect-btn"
             onClick={disconnectWallet}
           >
-            Disconnect
+           断开钱包连接2
           </button>
         </div>
       )}

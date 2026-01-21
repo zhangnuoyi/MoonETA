@@ -104,9 +104,62 @@ const Portfolio = () => {
   };
 
   // 处理钱包断开连接的回调
-  const handleWalletDisconnect = () => {
-    setWalletConnected(false);
-    setWalletAddress(null);
+  const handleWalletDisconnect = async () => {
+    try {
+      console.log('开始断开钱包连接...');
+      
+      if (window.ethereum) {
+        // 尝试使用wallet_revokePermissions方法撤销eth_accounts权限
+        try {
+          console.log('尝试使用wallet_revokePermissions方法撤销eth_accounts权限...');
+          await window.ethereum.request({
+            method: 'wallet_revokePermissions',
+            params: [{ eth_accounts: {} }]
+          });
+          console.log('成功撤销eth_accounts权限');
+        } catch (error) {
+          console.error('撤销eth_accounts权限失败:', error);
+        }
+        
+        // 尝试使用wallet_disconnect方法（如果可用）
+        try {
+          console.log('尝试使用wallet_disconnect方法断开连接...');
+          await window.ethereum.request({
+            method: 'wallet_disconnect'
+          });
+          console.log('成功使用wallet_disconnect方法断开连接');
+        } catch (error) {
+          console.error('wallet_disconnect方法失败:', error);
+        }
+        
+        // 尝试清除所有与钱包相关的事件监听器
+        try {
+          console.log('尝试清除钱包事件监听器...');
+          window.ethereum.removeAllListeners('accountsChanged');
+          window.ethereum.removeAllListeners('chainChanged');
+          window.ethereum.removeAllListeners('disconnect');
+          window.ethereum.removeAllListeners('connect');
+          console.log('成功清除钱包事件监听器');
+        } catch (error) {
+          console.error('清除钱包事件监听器失败:', error);
+        }
+      }
+      
+      // 设置本地状态为断开连接
+      setWalletConnected(false);
+      setWalletAddress(null);
+      
+      // 刷新页面，确保所有连接状态都被清除
+      console.log('强制刷新页面以清除所有连接状态...');
+      window.location.href = window.location.origin + '/portfolio';
+      
+      console.log('钱包已断开连接');
+    } catch (error) {
+      console.error('断开钱包连接失败:', error);
+      // 即使出错，也要设置本地状态为断开连接
+      setWalletConnected(false);
+      setWalletAddress(null);
+    }
   };
 
   // 模拟资产数据
@@ -154,7 +207,7 @@ const Portfolio = () => {
             <div className="logo">LEAPETF</div>
             <div className="wallet-info">
               <span className="wallet-address">{walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}</span>
-              <button className="disconnect-btn" onClick={handleWalletDisconnect}>Disconnect</button>
+              <button className="disconnect-btn" onClick={handleWalletDisconnect}>断开钱包连接4</button>
             </div>
           </div>
 
