@@ -54,32 +54,43 @@ const WalletConnectButton = ({ onConnect, onDisconnect, walletConnected, walletA
       console.log('开始断开钱包连接...');
       
       if (window.ethereum) {
-        // 1. 直接使用wallet_revokePermissions方法撤销eth_accounts权限
-        // 这是MetaMask文档中推荐的方法
+        // 1. 尝试使用eth_requestAccounts方法，传入空数组，这可能会重置连接状态
         try {
-          console.log('尝试使用wallet_revokePermissions方法撤销eth_accounts权限...');
+          console.log('尝试使用eth_requestAccounts方法重置连接状态...');
           await window.ethereum.request({
-            method: 'wallet_revokePermissions',
-            params: [{ eth_accounts: {} }]
+            method: 'eth_requestAccounts',
+            params: []
           });
-          console.log('成功撤销eth_accounts权限');
+          console.log('成功重置连接状态');
         } catch (error) {
-          console.error('撤销eth_accounts权限失败:', error);
+          console.error('重置连接状态失败:', error);
         }
         
-        // 2. 尝试使用wallet_requestPermissions方法，这可能会重置权限状态
+        // 2. 尝试使用wallet_disconnect方法（如果可用）
         try {
-          console.log('尝试使用wallet_requestPermissions方法重置权限状态...');
+          console.log('尝试使用wallet_disconnect方法断开连接...');
           await window.ethereum.request({
-            method: 'wallet_requestPermissions',
-            params: [{ eth_accounts: {} }]
+            method: 'wallet_disconnect'
           });
-          console.log('成功重置权限状态');
+          console.log('成功使用wallet_disconnect方法断开连接');
         } catch (error) {
-          console.error('重置权限状态失败:', error);
+          console.error('wallet_disconnect方法失败:', error);
         }
         
-        // 3. 尝试清除所有与钱包相关的事件监听器
+        // 3. 尝试使用window.ethereum.disconnect方法（如果可用）
+        try {
+          console.log('尝试使用window.ethereum.disconnect方法断开连接...');
+          if (typeof window.ethereum.disconnect === 'function') {
+            window.ethereum.disconnect();
+            console.log('成功使用window.ethereum.disconnect方法断开连接');
+          } else {
+            console.log('window.ethereum.disconnect方法不可用');
+          }
+        } catch (error) {
+          console.error('window.ethereum.disconnect方法失败:', error);
+        }
+        
+        // 4. 尝试清除所有与钱包相关的事件监听器
         try {
           console.log('尝试清除钱包事件监听器...');
           window.ethereum.removeAllListeners('accountsChanged');
@@ -91,24 +102,23 @@ const WalletConnectButton = ({ onConnect, onDisconnect, walletConnected, walletA
           console.error('清除钱包事件监听器失败:', error);
         }
         
-        // 4. 直接触发accountsChanged事件，传入空数组，通知所有监听器账户已断开
+        // 5. 尝试清除所有与钱包相关的本地存储
         try {
-          console.log('尝试触发accountsChanged事件...');
-          if (window.ethereum.on) {
-            // 模拟断开连接，触发accountsChanged事件
-            const event = new Event('accountsChanged');
-            event.accounts = [];
-            window.dispatchEvent(event);
-          }
-          console.log('成功触发accountsChanged事件');
+          console.log('尝试清除钱包本地存储...');
+          localStorage.removeItem('wallet_connect');
+          localStorage.removeItem('ethereum');
+          localStorage.removeItem('metamask');
+          console.log('成功清除钱包本地存储');
         } catch (error) {
-          console.error('触发accountsChanged事件失败:', error);
+          console.error('清除钱包本地存储失败:', error);
         }
         
-        // 5. 立即刷新页面，强制清除所有连接状态
+        // 6. 强制刷新页面，确保所有连接状态都被清除
         try {
-          console.log('刷新页面以清除所有连接状态...');
-          window.location.reload();
+          console.log('强制刷新页面以清除所有连接状态...');
+          setTimeout(() => {
+            window.location.href = window.location.origin;
+          }, 500);
         } catch (error) {
           console.error('刷新页面失败:', error);
         }
