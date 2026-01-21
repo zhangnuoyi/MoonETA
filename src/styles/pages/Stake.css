@@ -1,0 +1,395 @@
+/* 质押页面样式 */
+
+/* 容器样式 */
+.stake-container {
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+/* 页面内容 */
+.stake-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 概览部分 */
+.overview-section {
+  display: flex;
+  align-items: flex-start;
+}
+
+.overview-card {
+  width: 100%;
+  max-width: 800px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 2rem;
+  margin: 0 auto;
+}
+
+.overview-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 1.5rem;
+}
+
+.overview-icon {
+  font-size: 1.5rem;
+}
+
+/* 概览项 */
+.overview-item {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.overview-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.overview-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.overview-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 0.5rem;
+}
+
+.overview-subtext {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-bottom: 0.75rem;
+}
+
+/* 挖矿速率 */
+.mining-rate {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.rate-unit {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #64748b;
+}
+
+/* 供应信息 */
+.supply-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.supply-label {
+  font-weight: 500;
+}
+
+.supply-value {
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+/* 操作部分 */
+.action-section {
+  display: flex;
+  align-items: flex-start;
+}
+
+.action-card {
+  width: 100%;
+  max-width: 800px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 2rem;
+  margin: 0 auto;
+}
+
+/* 标签页导航 */
+.tab-nav {
+  display: flex;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  padding: 0.5rem;
+  margin-bottom: 2rem;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tab-btn {
+  flex: 0 0 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tab-btn:hover {
+  color: #1a1a2e;
+  background-color: rgba(59, 130, 246, 0.05);
+  transform: translateY(-1px);
+}
+
+.tab-btn.active {
+  color: #ffffff;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  transform: translateY(-1px);
+}
+
+.tab-btn.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  z-index: -1;
+}
+
+.tab-btn.active:hover::before {
+  opacity: 1;
+}
+
+.tab-btn:active {
+  transform: translateY(0);
+}
+
+.tab-icon {
+  font-size: 1rem;
+}
+
+/* 标签页内容 */
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* 表单行 */
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.form-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+/* 输入包装器 */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.input-wrapper:hover {
+  border-color: #cbd5e1;
+}
+
+.input-wrapper:focus-within {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* 金额输入框 */
+.amount-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: #1a1a2e;
+  background: transparent;
+}
+
+.amount-input::placeholder {
+  color: #94a3b8;
+}
+
+/* 代币信息 */
+.token-info {
+  display: flex;
+  align-items: center;
+}
+
+.token-symbol {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+/* 质押按钮 */
+.stake-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #3b82f6;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  margin-top: 1rem;
+}
+
+.stake-btn:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.stake-btn:active {
+  transform: translateY(0);
+}
+
+/* 解除质押按钮 */
+.unstake-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #ef4444;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  margin-top: 1rem;
+}
+
+.unstake-btn:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.unstake-btn:active {
+  transform: translateY(0);
+}
+
+/* 按钮图标 */
+.btn-icon {
+  font-size: 1rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .stake-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .stake-container {
+    padding: 1rem;
+  }
+
+  .overview-card,
+  .action-card {
+    padding: 1.5rem;
+  }
+
+  .overview-title {
+    font-size: 1.125rem;
+  }
+
+  .overview-value {
+    font-size: 1.25rem;
+  }
+
+  .tab-btn {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .input-wrapper {
+    padding: 0.625rem 0.875rem;
+  }
+
+  .amount-input {
+    font-size: 0.875rem;
+  }
+
+  .stake-btn,
+  .unstake-btn {
+    padding: 0.875rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* 加载动画 */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading {
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

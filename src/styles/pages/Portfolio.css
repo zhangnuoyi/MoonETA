@@ -1,0 +1,241 @@
+/* 投资组合页面样式 */
+
+/* 容器样式 */
+.portfolio-container {
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+/* 网站介绍样式 */
+.website-intro {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2rem 0;
+}
+
+.intro-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #1a1a2e;
+  margin-bottom: 0.5rem;
+}
+
+.intro-subtitle {
+  font-size: 1.1rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* 钱包连接提示样式 */
+.wallet-prompt {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.wallet-prompt-content {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 2.5rem;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+}
+
+.prompt-icon {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.prompt-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 0.75rem;
+}
+
+.prompt-message {
+  font-size: 1rem;
+  color: #64748b;
+  margin-bottom: 2rem;
+}
+
+/* 投资组合头部样式 */
+.portfolio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.portfolio-title h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.portfolio-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+/* 投资组合摘要样式 */
+.portfolio-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.summary-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.summary-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.summary-value {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.summary-value.positive {
+  color: #10b981;
+}
+
+.summary-value.negative {
+  color: #ef4444;
+}
+
+.summary-change {
+  font-size: 1rem;
+  margin-left: 0.5rem;
+  font-weight: 500;
+}
+
+/* 投资组合内容样式 */
+.portfolio-content {
+  margin-top: 2rem;
+}
+
+.portfolio-section {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.portfolio-section h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 1.5rem;
+}
+
+/* ETF卡片网格样式 */
+.eta-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .portfolio-container {
+    padding: 1rem;
+  }
+
+  .intro-title {
+    font-size: 2rem;
+  }
+
+  .portfolio-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .portfolio-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .portfolio-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .eta-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .portfolio-section {
+    padding: 1.5rem;
+  }
+
+  .wallet-prompt-content {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .eta-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 加载动画 */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading {
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* 空状态样式 */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #64748b;
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-message {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
