@@ -6,29 +6,55 @@ import '../../styles/components/WalletConnectButton.css';
  * 连接钱包按钮组件
  * 处理MetaMask钱包连接功能
  */
-const WalletConnectButton = () => {
-  const [walletAddress, setWalletAddress] = React.useState(null);
-
+const WalletConnectButton = ({ onConnect, onDisconnect, walletConnected, walletAddress }) => {
   /**
    * 连接钱包函数
-   * 使用ethers.js与MetaMask交互
+   * 直接使用window.ethereum对象与MetaMask交互
    */
   const connectWallet = async () => {
     try {
+      console.log('开始连接钱包...');
+      
       if (!window.ethereum) {
+        console.log('未检测到MetaMask');
         alert('请安装MetaMask钱包');
         return;
       }
 
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const address = await signer.getAddress();
+      console.log('检测到MetaMask，准备触发连接请求...');
+      console.log('window.ethereum对象:', window.ethereum);
+      console.log('window.ethereum是否有request方法:', typeof window.ethereum.request === 'function');
       
-      setWalletAddress(address);
+      // 强制触发MetaMask连接请求，确保弹出确认窗口
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts'
+      });
+      
+      console.log('连接请求成功，返回的账户:', accounts);
+      
+      const address = accounts[0];
+      
       console.log('钱包连接成功:', address);
+      
+      // 调用回调函数通知父组件
+      if (onConnect) {
+        onConnect(address);
+      }
     } catch (error) {
       console.error('连接钱包失败:', error);
       alert('连接钱包失败，请重试');
+    }
+  };
+
+  /**
+   * 断开钱包连接
+   */
+  const disconnectWallet = () => {
+    console.log('钱包已断开连接');
+    
+    // 调用回调函数通知父组件
+    if (onDisconnect) {
+      onDisconnect();
     }
   };
 
@@ -41,12 +67,34 @@ const WalletConnectButton = () => {
   };
 
   return (
-    <button 
-      className="wallet-connect-btn"
-      onClick={connectWallet}
-    >
-      {walletAddress ? formatWalletAddress(walletAddress) : '连接钱包'}
-    </button>
+    <>
+      {!walletConnected ? (
+        <div className="wallet-connect-options">
+          <button 
+            className="wallet-connect-btn meta-mask-btn"
+            onClick={connectWallet}
+          >
+            Connect with MetaMask
+          </button>
+          <button 
+            className="wallet-connect-btn brave-wallet-btn"
+            onClick={connectWallet}
+          >
+            Connect with Brave Wallet
+          </button>
+        </div>
+      ) : (
+        <div className="wallet-connected-info">
+          <span className="wallet-address">{formatWalletAddress(walletAddress)}</span>
+          <button 
+            className="disconnect-btn"
+            onClick={disconnectWallet}
+          >
+            Disconnect
+          </button>
+        </div>
+      )}
+    </>
   );
 };
 

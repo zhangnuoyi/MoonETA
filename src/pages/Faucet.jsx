@@ -1,12 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
 import '../styles/pages/Faucet.css';
+import WalletConnectButton from '../components/ui/WalletConnectButton';
 
 /**
  * 测试代币水龙头页面组件
  * 用于领取测试网络上的代币
  */
 const Faucet = () => {
+  const [walletConnected, setWalletConnected] = useState(false);
+  const [walletAddress, setWalletAddress] = useState(null);
   const [activeTab, setActiveTab] = useState('one-click');
+
+  // 监听钱包连接状态变化
+  useEffect(() => {
+    if (window.ethereum) {
+      // 监听账号变化
+      window.ethereum.on('accountsChanged', async (accounts) => {
+        if (accounts.length > 0) {
+          setWalletConnected(true);
+          setWalletAddress(accounts[0]);
+        } else {
+          setWalletConnected(false);
+          setWalletAddress(null);
+        }
+      });
+
+      // 监听链变化
+      window.ethereum.on('chainChanged', () => {
+        // 链变化时，重置连接状态
+        setWalletConnected(false);
+        setWalletAddress(null);
+      });
+    }
+  }, []);
 
   // 模拟数据
   const tokens = [
@@ -33,9 +60,46 @@ const Faucet = () => {
     // 这里可以添加实际的领取逻辑
   };
 
+  // 处理钱包连接成功的回调
+  const handleWalletConnect = (address) => {
+    setWalletConnected(true);
+    setWalletAddress(address);
+  };
+
+  // 处理钱包断开连接的回调
+  const handleWalletDisconnect = () => {
+    setWalletConnected(false);
+    setWalletAddress(null);
+  };
+
   return (
     <div className="faucet-container">
-      <div className="faucet-content">
+      {/* 网站标语和介绍 */}
+      <div className="website-intro">
+        <h1 className="intro-title">LEAPETF</h1>
+        <p className="intro-subtitle">去中心化区块链ETF交易平台</p>
+      </div>
+
+      {/* 钱包连接提示 */}
+      {!walletConnected && (
+        <div className="wallet-prompt">
+          <div className="wallet-prompt-content">
+            <h2 className="prompt-title">Welcome to LeapETF</h2>
+            <p className="prompt-message">A decentralized platform for trading blockchain-based ETFs</p>
+            <p className="prompt-submessage">Connect your wallet to claim test tokens</p>
+            <WalletConnectButton 
+              onConnect={handleWalletConnect} 
+              onDisconnect={handleWalletDisconnect} 
+              walletConnected={walletConnected} 
+              walletAddress={walletAddress} 
+            />
+          </div>
+        </div>
+      )}
+
+      {/* 水龙头内容 - 仅在钱包连接后显示 */}
+      {walletConnected && (
+        <div className="faucet-content">
         {/* 左侧内容 */}
         <div className="left-section">
           <div className="info-card">
@@ -146,7 +210,8 @@ const Faucet = () => {
             )}
           </div>
         </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 };

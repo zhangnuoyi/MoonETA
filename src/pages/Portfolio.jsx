@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
 import '../styles/pages/Portfolio.css';
 import WalletConnectButton from '../components/ui/WalletConnectButton';
 import EtfCard from '../components/ui/EtfCard';
@@ -59,37 +60,11 @@ const Portfolio = () => {
     }
   ];
 
-  // 检测钱包连接状态
+  // 监听钱包连接状态变化
   useEffect(() => {
-    const checkWalletConnection = async () => {
-      try {
-        if (window.ethereum) {
-          const provider = new window.ethereum;
-          const accounts = await provider.request({ method: 'eth_accounts' });
-          
-          if (accounts.length > 0) {
-            setWalletConnected(true);
-            setWalletAddress(accounts[0]);
-          } else {
-            setWalletConnected(false);
-            setWalletAddress(null);
-          }
-        } else {
-          setWalletConnected(false);
-          setWalletAddress(null);
-        }
-      } catch (error) {
-        console.error('检测钱包连接状态失败:', error);
-        setWalletConnected(false);
-        setWalletAddress(null);
-      }
-    };
-
-    checkWalletConnection();
-
-    // 监听钱包连接状态变化
     if (window.ethereum) {
-      window.ethereum.on('accountsChanged', (accounts) => {
+      // 监听账号变化
+      window.ethereum.on('accountsChanged', async (accounts) => {
         if (accounts.length > 0) {
           setWalletConnected(true);
           setWalletAddress(accounts[0]);
@@ -98,17 +73,42 @@ const Portfolio = () => {
           setWalletAddress(null);
         }
       });
+
+      // 监听链变化
+      window.ethereum.on('chainChanged', () => {
+        // 链变化时，重置连接状态
+        setWalletConnected(false);
+        setWalletAddress(null);
+      });
     }
   }, []);
 
-  // 计算投资组合总价值
-  const totalPortfolioValue = etfData.reduce((total, etf) => total + etf.totalValue, 0);
+  // 模拟ETH资产数据
+  const ethBalance = {
+    amount: 0.5,
+    value: 1250.00
+  };
+
+  // 计算投资组合总价值（包含ETH）
+  const totalPortfolioValue = etfData.reduce((total, etf) => total + etf.totalValue, 0) + ethBalance.value;
 
   // 计算总收益
   const totalReturns = etfData.reduce((total, etf) => {
     const costBasis = (etf.price - etf.change) * etf.holdings;
     return total + (etf.totalValue - costBasis);
   }, 0);
+
+  // 处理钱包连接成功的回调
+  const handleWalletConnect = (address) => {
+    setWalletConnected(true);
+    setWalletAddress(address);
+  };
+
+  // 处理钱包断开连接的回调
+  const handleWalletDisconnect = () => {
+    setWalletConnected(false);
+    setWalletAddress(null);
+  };
 
   return (
     <div className="portfolio-container">
@@ -122,10 +122,15 @@ const Portfolio = () => {
       {!walletConnected && (
         <div className="wallet-prompt">
           <div className="wallet-prompt-content">
-            <div className="prompt-icon">🔗</div>
-            <h2 className="prompt-title">连接钱包开始交易</h2>
-            <p className="prompt-message">未检测到钱包。请安装钱包以继续。</p>
-            <WalletConnectButton />
+            <h2 className="prompt-title">Welcome to LeapETF</h2>
+            <p className="prompt-message">A decentralized platform for trading blockchain-based ETFs</p>
+            <p className="prompt-submessage">Connect your wallet to start trading</p>
+            <WalletConnectButton 
+              onConnect={handleWalletConnect} 
+              onDisconnect={handleWalletDisconnect} 
+              walletConnected={walletConnected} 
+              walletAddress={walletAddress} 
+            />
           </div>
         </div>
       )}
@@ -138,7 +143,12 @@ const Portfolio = () => {
               <h1>我的投资组合</h1>
             </div>
             <div className="portfolio-actions">
-              <WalletConnectButton />
+              <WalletConnectButton 
+                onConnect={handleWalletConnect} 
+                onDisconnect={handleWalletDisconnect} 
+                walletConnected={walletConnected} 
+                walletAddress={walletAddress} 
+              />
             </div>
           </div>
 
@@ -161,8 +171,29 @@ const Portfolio = () => {
           </div>
 
           <div className="portfolio-content">
+            {/* ETH资产显示 */}
             <div className="portfolio-section">
-              <h2>我的持仓</h2>
+              <h2>我的资产</h2>
+              <div className="asset-cards-grid">
+                <div className="asset-card eth-card">
+                  <div className="asset-header">
+                    <div className="asset-icon">Ξ</div>
+                    <div className="asset-info">
+                      <div className="asset-name">Ethereum</div>
+                      <div className="asset-symbol">ETH</div>
+                    </div>
+                  </div>
+                  <div className="asset-balance">
+                    <div className="balance-amount">{ethBalance.amount} ETH</div>
+                    <div className="balance-value">${ethBalance.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* ETF持仓显示 */}
+            <div className="portfolio-section">
+              <h2>我的ETF持仓</h2>
               <div className="eta-cards-grid">
                 {etfData.map(etf => (
                   <EtfCard key={etf.id} eta={etf} />

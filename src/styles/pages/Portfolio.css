@@ -60,6 +60,12 @@
 .prompt-message {
   font-size: 1rem;
   color: #64748b;
+  margin-bottom: 1rem;
+}
+
+.prompt-submessage {
+  font-size: 0.875rem;
+  color: #94a3b8;
   margin-bottom: 2rem;
 }
 
@@ -159,6 +165,90 @@
   gap: 1.5rem;
 }
 
+/* 资产卡片网格 */
+.asset-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* 资产卡片 */
+.asset-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.asset-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* ETH卡片特殊样式 */
+.eth-card {
+  border: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+}
+
+/* 资产卡片头部 */
+.asset-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* 资产图标 */
+.asset-icon {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #6366f1;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(99, 102, 241, 0.1);
+  border-radius: 8px;
+}
+
+/* 资产信息 */
+.asset-info {
+  flex: 1;
+}
+
+.asset-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 0.25rem;
+}
+
+.asset-symbol {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+/* 资产余额 */
+.asset-balance {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.balance-amount {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.balance-value {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .portfolio-container {
@@ -185,6 +275,10 @@
   }
 
   .eta-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .asset-cards-grid {
     grid-template-columns: 1fr;
   }
 
