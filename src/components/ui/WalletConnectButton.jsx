@@ -49,12 +49,50 @@ const WalletConnectButton = ({ onConnect, onDisconnect, walletConnected, walletA
   /**
    * 断开钱包连接
    */
-  const disconnectWallet = () => {
-    console.log('钱包已断开连接');
-    
-    // 调用回调函数通知父组件
-    if (onDisconnect) {
-      onDisconnect();
+  const disconnectWallet = async () => {
+    try {
+      console.log('开始断开钱包连接...');
+      
+      if (window.ethereum) {
+        // 尝试使用wallet_revokePermissions方法断开连接
+        try {
+          await window.ethereum.request({
+            method: 'wallet_revokePermissions',
+            params: [{
+              eth_accounts: {}
+            }]
+          });
+          console.log('成功撤销钱包权限');
+        } catch (error) {
+          console.error('撤销钱包权限失败:', error);
+          // 如果wallet_revokePermissions方法不可用，尝试其他方法
+          try {
+            // 尝试使用wallet_requestPermissions方法重新请求权限，可能会触发用户确认
+            await window.ethereum.request({
+              method: 'wallet_requestPermissions',
+              params: [{
+                eth_accounts: {}
+              }]
+            });
+            console.log('重新请求钱包权限成功');
+          } catch (error) {
+            console.error('重新请求钱包权限失败:', error);
+          }
+        }
+      }
+      
+      console.log('钱包已断开连接');
+      
+      // 调用回调函数通知父组件
+      if (onDisconnect) {
+        onDisconnect();
+      }
+    } catch (error) {
+      console.error('断开钱包连接失败:', error);
+      // 即使出错，也要调用回调函数通知父组件
+      if (onDisconnect) {
+        onDisconnect();
+      }
     }
   };
 
